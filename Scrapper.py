@@ -10,7 +10,7 @@ import xlwt
 import sys
 import os
 import time
-import urllib.request
+from datetime import datetime
 
 ## GLOBAL VARIABLES THEIR VALUES DIRECTLY EXTRACTED FROM CONFIG FILES
 HTTP_PROXY_1 = None
@@ -32,7 +32,7 @@ PROXY_SERVER_USED = 1
 CITY_STATE_ZIP = None
 TARGET_URLS = []
 DRIVER = None
-USER_DETAILS = './HarvestedOutput/ScrappedDetails.csv'
+USER_DETAILS = None
 
 def detect_reCaptcha():
     global DRIVER
@@ -40,12 +40,16 @@ def detect_reCaptcha():
     captcha_field2 = False
     print('[  INFO  ] Checking Presence Of reCaptcha')
     try:
+        ## CHECKING PRESENCE OF TEXT LIKE HUMAN TEST ON PRESENT WEB PAGE
         captcha_field1 = DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/h2').text == 'Human Test'
     except:
+        ## THIS BLOCK RUNS WHEN THEIRS NO TEXT LIKE ABOVE AVAILABLE ON WEB PAGE
         pass
     try:
+        ## CHECKING PRESENCE OF TEXT LIKE HUMAN TEST, SORRY FOR INCONVENIENCE ON PRESENT WEB PAGE
         captcha_field2 = DRIVER.find_element_by_xpath('/html/body/p').text == 'Human test, sorry for the inconvenience.\nPlease check the box below.'
     except:
+        ## THIS BLOCK RUNS WHEN THEIRS NO TEXT LIKE ABOVE AVAILABLE ON WEB PAGE
         pass
     if captcha_field1 or captcha_field2:
         return True
@@ -60,9 +64,9 @@ def print_banner():
         os.system('clear')
     ## PRINTING BANNER
     print("""
---------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
                                     Optimus - True People Scrapper                    v1.0
---------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
                                                                     -<c> Prashant Varshney""")
 
 
@@ -86,10 +90,10 @@ def initialisation():
     ############################## READING CONFIGURATION FILES ###############################
     config = ConfigParser(allow_no_value=True)
     if "Config.cfg" in os.listdir():
-        print("[  INFO  ] Reading Configuration File - Proxy.cfg")
+        print("[  INFO  ] Reading Configuration File - Config.cfg")
         config.read('Config.cfg')
     else:
-        print("[  ERROR ] Configuration File - Proxy.cfg Is Missing")
+        print("[  ERROR ] Configuration File - Config.cfg Is Missing")
         print("[  INFO  ] Exiting...")
         sys.exit(0)
     if "TargetingAge.cfg" in os.listdir(os.path.join(os.getcwd(),"InputData")):
@@ -113,15 +117,12 @@ def initialisation():
         print("[  ERROR ] Configuration File - TargetingNames.cfg Is Missing")
         print("[  INFO  ] Exiting...")
         sys.exit(0)
-    ##
     ############################## UPDATING GLOBAL VARIABLES ##################################
     print('[  INFO  ] Updating Global Variables')
     HTTP_PROXY_1 = config["PROXY_SERVER_1"]["HTTP_PROXY"]
     PORT_1 = config["PROXY_SERVER_1"]["PORT"]
     HTTP_PROXY_2 = config["PROXY_SERVER_2"]["HTTP_PROXY"]
     PORT_2 = config["PROXY_SERVER_2"]["PORT"]
-    # USER_NAME = config["PROXY_SERVER"]["USER_NAME"]
-    # PASSWORD = config["PROXY_SERVER"]["PASSWORD"]
     FIRST_NAMES = list(config["FIRST-NAME-COL"])
     LAST_NAMES = list(config["LAST-NAME-COL"])
     AGE_GROUP = list(config["AGE-COL"])
@@ -142,7 +143,7 @@ def initialising_browser():
     global PORT_2
     global PROXY_SERVER_USED
     global DRIVER
-
+    ##
     print('[  INFO  ] Initialising Chrome With Config.cfg Configurations')
     ## SETTING CHROME TO START WITH FULL SCREEN GUI
     chrome_options = webdriver.ChromeOptions()
@@ -173,13 +174,7 @@ def initialising_browser():
 def get_request(url):
     global DELAY
     global DRIVER
-    # try:
-    #     DRIVER.implicitly_wait(5)
-    #     DRIVER.get('https://ident.me')
-    #     external_ip = DRIVER.find_element_by_xpath('/html/body/pre').text
-    #     print('\n[  INFO  ] Current IP : '+external_ip)
-    # except:
-    #     pass
+    global TIMEOUT
     print('[  INFO  ] Requesting URL : '+url)
     loading_status = True
     url_reload_status = True
@@ -187,7 +182,7 @@ def get_request(url):
     while loading_status :
         while url_reload_status:		
             try:
-                DRIVER.set_page_load_timeout(20)
+                DRIVER.set_page_load_timeout(TIMEOUT)
                 DRIVER.get(url)
                 url_reload_status = False
             except Exception as e:
@@ -228,7 +223,11 @@ def true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit):
     res_status = get_request(search_url)	
     ## COLLECTING NUMBER OF RESULTS FOUND
     if res_status:
-        number_of_results = int(DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[3]/div[1]').text.split(' ')[0])
+        ## CHECKING WHETHER THIS COMBINATION PRESENTS ON WEBSITE OR NOT
+        try:
+            number_of_results = int(DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[3]/div[1]').text.split(' ')[0])
+        except:
+            number_of_results = 0            
         print('[  INFO  ] Number Of Search Results : ' + str(number_of_results))
         number_of_pages = 1 if (number_of_results < 10) else number_of_results // 10
         print('[  INFO  ] Number Of Pages To Query : ' + str(number_of_pages))
@@ -266,6 +265,7 @@ def generate_list_of_urls():
                     true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit)
                     if len(TARGET_URLS) >= COUNT:
                         return
+    print('[  INFO  ] All The Possible Combinations Of Names And CityStateZip Created')
 
 
 if __name__ == "__main__":
@@ -275,6 +275,12 @@ if __name__ == "__main__":
     generate_list_of_urls()
     print(f'\n[  INFO  ] Total Users Found : {len(TARGET_URLS)}')
     ## QUERY ABOUT THE EACH USER IN TARGET_URLS
+    ## CREATING FILE FOR STORING HARVESTED DATA, HERE I AM GOING TO ADD HEADERS IN FILE
+    USER_DETAILS = f'./HarvestedOutput/ScrappedDetails_{datetime.now().strftime("(%d-%m-%Y)_(%H-%M-%S)")}.csv'
+    print(f'[  INFO  ] Storing Harvested Data in {USER_DETAILS}')
+    with open(USER_DETAILS,'w') as fd:
+        fd.write(f'Name,Age,Address,Wireless-1,Wireless-2,Wireless-3,Wireless-4,Wireless-5,Wireless-6,Landline-1,Landline-2,Landline-3,Landline-4,Landline-5,Landline-6\n')
+        fd.flush()
     for i in range(len(TARGET_URLS)):
         user_name = ""
         user_age = 'NaN'
@@ -294,7 +300,7 @@ if __name__ == "__main__":
             pass
         ## CONTACT
         try:
-            user_contact = DRIVER.find_element_by_xpath('//*[@id="personDetails"]/div[6]/div[2]').text[14:].replace(' - Wireless',',').replace(' - Landline',',').replace('View All Phone Numbers','').replace('\n','').replace('\t',' ')[:-1]
+            user_contact = DRIVER.find_element_by_xpath('//*[@id="personDetails"]/div[6]/div[2]').text[14:].replace('View All Phone Numbers','').replace(' - Landline','&Landline;').replace(' - Wireless','&Wireless;').replace('\n','').replace('\t',' ')
         except:
             pass
         ## ADDRESS 
@@ -302,15 +308,42 @@ if __name__ == "__main__":
             user_address = DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[4]/div[2]/div[2]/div[1]/div/a').text.replace('\n',',').replace('\t',' ').replace(',',' ')
         except:
             pass
-        user_contact = user_contact
+        if user_age == 'NaN':
+            continue
+        ## SPLITING INTO DIFFERENT CATEGORIES LIKE LANDLINE AND WIRELESS
+        user_contact = user_contact.split(';')[:-1]      ## -1 TO REMOVE BLANK ELEMENT OF LIST
+        ## SPLITING FURTHER INTO NUMERIC VALUES AND STRINGS
+        wireless = []
+        landline = []
+        for i in range(len(user_contact)):
+            user_contact[i] = user_contact[i].split('&')
+            if user_contact[i][1] == 'Landline':
+                landline.append(user_contact[i][0])
+            if user_contact[i][1] == 'Wireless':
+                wireless.append(user_contact[i][0])
         print('\nName : '+user_name)
         print('Age : '+user_age)
-        print('Contact : '+user_contact)
+        print(f'Wireless Contact : {wireless}')
+        print(f'Landline Contact : {landline}')
         print('Address : '+user_address)
         ## WRITING IN CSV FILE
         with open(USER_DETAILS,'a') as fd:
             fd.write(user_name+','+user_age+','+user_address+',')
-            user_contact = user_contact.split(',')
-            for num in user_contact:
-                fd.write(num+',')
+            ## ENTERING WIRELESS CONTACT NUMBERS
+            blank_space = 6-len(wireless) if(len(wireless) <= 6) else 0
+            for i in range(len(wireless)):
+                fd.write(wireless[i]+',')
+                if i == 6:
+                    break
+            for i in range(blank_space):
+                fd.write(',')
+            ## ENTERING LANDLINE CONTACT NUMBERS
+            blank_space = 6-len(landline) if(len(landline) <= 6) else 0
+            for i in range(len(landline)):
+                fd.write(landline[i]+',')
+                if i == 6:
+                    break
+            for i in range(blank_space):
+                fd.write(',')
             fd.write('\n')
+    print('\n\n[  INFO  ] Extraction Completed')
