@@ -231,12 +231,9 @@ def get_request(url):
     while testing_connectivity:
         status = check_connectivity()
         if status == False:
-            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connectivity With Proxy Server Lost')
-            choice = input('[ CHOICE ] Retry (Y/N) ? : ')
-            if choice in ['n','N']:
-                print(f'{Fore.YELLOW}[  INFO  ]\033 Exiting...')
-                DRIVER.close()
-                sys.exit(0)
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connectivity Lost With Proxy Server')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Retrying in 10 seconds')        
+            time.sleep(10)
         else:
             testing_connectivity = False
     print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Requesting URL : '+url)
@@ -347,13 +344,11 @@ def check_connectivity():
             except:
                 reload_count += 1
                 if reload_count >= 5 :
-                    print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connection Lost with Proxy Server')
                     return False
         ## IF CONNECTION IS SLOW THEN IT RETRY FOR 5 TIMES
         except Exception as e:
             reload_count += 1
             if reload_count >= 5 :
-                print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connection Lost with Proxy Server')
                 print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
                 input()
                 return False
