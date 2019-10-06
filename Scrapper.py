@@ -6,12 +6,16 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.webdriver.support.select import Select 
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.common.keys import Keys
-import xlwt
+from colorama import Fore
+from colorama import Style
+from colorama import init
 import sys
 import os
 import time
 from datetime import datetime
 
+## INITALISING COLORAMA
+init(convert=True)
 ## GLOBAL VARIABLES THEIR VALUES DIRECTLY EXTRACTED FROM CONFIG FILES
 HTTP_PROXY_1 = None
 PORT_1 = None
@@ -38,7 +42,7 @@ def detect_reCaptcha():
     global DRIVER
     captcha_field1 = False
     captcha_field2 = False
-    print('[  INFO  ] Checking Presence Of reCaptcha')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Checking Presence Of reCaptcha')
     try:
         ## CHECKING PRESENCE OF TEXT LIKE HUMAN TEST ON PRESENT WEB PAGE
         captcha_field1 = DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/h2').text == 'Human Test'
@@ -57,18 +61,41 @@ def detect_reCaptcha():
         return False
 
 def print_banner():
+    ## OPENING CONSOLE IN REQUIRED RESOLUTIONS
     ## CLEARING CONSOLE
     if os.name == 'nt':
         os.system('cls')
+        os.system("mode con:cols=96 lines=35")
     elif os.name == 'posix':
         os.system('clear')
     ## PRINTING BANNER
-    print("""
-----------------------------------------------------------------------------------------------
-                                    Optimus - True People Scrapper                    v1.0
-----------------------------------------------------------------------------------------------
-                                                                    -<c> Prashant Varshney""")
+    print(f'''
+                            
+                 _ood>H&H&Z?#M#b-\.
+             .\HMMMMMR?`\M6b."`' ''``v.
+          .. .MMMMMMMMMMHMMM#&.      ``~o.
+        .   ,HMMMMMMMMMM`' '           ?MP?.       
+       . |MMMMMMMMMMM'                 `"$b&
+      -  |MMMMHH##M'                     HMMH?
+     -   TTM|     >..                   \HMMMMH
+    :     |MM\,#-""$~b\.                `MMMMMM+
+   .       ``"H&#        -               &MMMMMM|    {Fore.RED}         =[ True People Search         ]{Style.RESET_ALL}{Fore.YELLOW}
+   :            *\v,#MHddc.              `9MMMMMb       + .. ..=[ Author : Prashant Varshney ]
+   .               MMMMMMMM##\             `"":HM      + .. ..=[ Version : 1.1              ]
+   -          .  .HMMMMMMMMMMRo_.              |M
+   :             |MMMMMMMMMMMMMMMM#\           :M
+   -              `HMMMMMMMMMMMMMM'            |T
+   :               `*HMMMMMMMMMMM'             H'
+    :                MMMMMMMMMMM|             |T
+     ;               MMMMMMMM?'              ./
+      `              MMMMMMH'               ./'
+       -            |MMMH#'                 .
+        `           `MM*                . `
+          _          #M: .    .       .-'
+             .          .,         .-'
+                '-.-~ooHH__,,v~--`'
 
+    {Style.RESET_ALL}''')
 
 ## READING CONFIGURATION FILES
 def initialisation():
@@ -90,35 +117,59 @@ def initialisation():
     ############################## READING CONFIGURATION FILES ###############################
     config = ConfigParser(allow_no_value=True)
     if "Config.cfg" in os.listdir():
-        print("[  INFO  ] Reading Configuration File - Config.cfg")
-        config.read('Config.cfg')
+        print(f"{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Reading Configuration File - Config.cfg")
+        try:
+            config.read('Config.cfg')
+        except:
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Failed To Read Config.cfg Due To Invalid Syntax of Configuration File')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+            input()
+            sys.exit(0)
     else:
-        print("[  ERROR ] Configuration File - Config.cfg Is Missing")
-        print("[  INFO  ] Exiting...")
+        print(f"{Fore.RED}[  ERROR ]{Style.RESET_ALL} Configuration File - Config.cfg Is Missing")
+        input(f"{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...")
         sys.exit(0)
     if "TargetingAge.cfg" in os.listdir(os.path.join(os.getcwd(),"InputData")):
-        print('[  INFO  ] Reading Configuration File - TargetingAge.cfg ')
-        config.read('InputData/TargetingAge.cfg')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Reading Configuration File - TargetingAge.cfg ')
+        try:
+            config.read('InputData/TargetingAge.cfg')
+        except:
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Failed To Read TargetingAge.cfg Due To Invalid Syntax of Configuration File')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+            input()
+            sys.exit(0)
     else:
-        print("[  ERROR ] Configuration File - TargetingAge.cfg Is Missing")
-        print("[  INFO  ] Exiting...")
+        print(f"{Fore.RED}[  ERROR ]{Style.RESET_ALL} Configuration File - TargetingAge.cfg Is Missing")
+        input(f"{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...")
         sys.exit(0)
     if "TargetingCities.cfg" in os.listdir(os.path.join(os.getcwd(),"InputData")):
-        print('[  INFO  ] Reading Configuration File - TargetingCities.cfg ')
-        config.read('InputData/TargetingCities.cfg')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Reading Configuration File - TargetingCities.cfg ')
+        try:
+            config.read('InputData/TargetingCities.cfg')
+        except:
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Failed To Read TargetingCities.cfg Due To Invalid Syntax of Configuration File')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+            input()
+            sys.exit(0)
     else:
-        print("[  ERROR ] Configuration File - TargetingCities.cfg Is Missing")
-        print("[  INFO  ] Exiting...")
+        print(f"{Fore.RED}[  ERROR ]{Style.RESET_ALL} Configuration File - TargetingCities.cfg Is Missing")
+        input(f"{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...")
         sys.exit(0)
     if "TargetingNames.cfg" in os.listdir(os.path.join(os.getcwd(),"InputData")):
-        print('[  INFO  ] Reading Configuration File - TargetingNames.cfg ')
-        config.read('InputData/TargetingNames.cfg')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Reading Configuration File - TargetingNames.cfg ')
+        try:
+            config.read('InputData/TargetingNames.cfg')
+        except:
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Failed To Read TargetingNames.cfg Due To Invalid Syntax of Configuration File')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+            input()
+            sys.exit(0)
     else:
-        print("[  ERROR ] Configuration File - TargetingNames.cfg Is Missing")
-        print("[  INFO  ] Exiting...")
+        print(f"{Fore.RED}[  ERROR ]{Style.RESET_ALL} Configuration File - TargetingNames.cfg Is Missing")
+        input(f"{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...")
         sys.exit(0)
     ############################## UPDATING GLOBAL VARIABLES ##################################
-    print('[  INFO  ] Updating Global Variables')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Updating Global Variables')
     HTTP_PROXY_1 = config["PROXY_SERVER_1"]["HTTP_PROXY"]
     PORT_1 = config["PROXY_SERVER_1"]["PORT"]
     HTTP_PROXY_2 = config["PROXY_SERVER_2"]["HTTP_PROXY"]
@@ -144,7 +195,7 @@ def initialising_browser():
     global PROXY_SERVER_USED
     global DRIVER
     ##
-    print('[  INFO  ] Initialising Chrome With Config.cfg Configurations')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Initialising Chrome With Config.cfg Configurations')
     ## SETTING CHROME TO START WITH FULL SCREEN GUI
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--ignore-certificate-errors')
@@ -158,7 +209,7 @@ def initialising_browser():
     elif PROXY_SERVER_USED == 2:
         proxy_server = f'{HTTP_PROXY_1}:{PORT_1}'
         PROXY_SERVER_USED = 1
-    print(f'[  INFO  ] Using Proxy - {proxy_server}')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Using Proxy - {proxy_server}')
     chrome_options.add_argument(f'--proxy-server={proxy_server}')
     ## BLOCKING IMAGE LOADING
     prefs = {"profile.managed_default_content_settings.images": 2}
@@ -168,14 +219,27 @@ def initialising_browser():
         executable_path=os.path.join(os.getcwd(),"Resources","chromedriver.exe"),
         options=chrome_options
         )
-    print('[  INFO  ] Chrome Initialisation Completed')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Chrome Initialisation Completed')
     return DRIVER
 
 def get_request(url):
     global DELAY
     global DRIVER
     global TIMEOUT
-    print('[  INFO  ] Requesting URL : '+url)
+    ## CHECKING INTERNET CONNECTIVITY EVERY 100 REQUESTS SEND TI SERVER
+    testing_connectivity = True
+    while testing_connectivity:
+        status = check_connectivity()
+        if status == False:
+            print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connectivity With Proxy Server Lost')
+            choice = input('[ CHOICE ] Retry (Y/N) ? : ')
+            if choice in ['n','N']:
+                print(f'{Fore.YELLOW}[  INFO  ]\033 Exiting...')
+                DRIVER.close()
+                sys.exit(0)
+        else:
+            testing_connectivity = False
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Requesting URL : '+url)
     loading_status = True
     url_reload_status = True
     reload_count = 0
@@ -186,38 +250,38 @@ def get_request(url):
                 DRIVER.get(url)
                 url_reload_status = False
             except Exception as e:
-                print('[  ERROR ] '+str(e))
-                print('[  INFO  ] Deleting Browser Cookies')
+                print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} '+str(e))
+                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Deleting Browser Cookies')
                 DRIVER.delete_all_cookies() 
-                print('[  INFO  ] Trying To Fetch Same URL')
+                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Trying To Fetch Same URL')
                 reload_count += 1
                 if reload_count >= 5 :
-                    print('[  ERROR ] Cannot Able To Fetch : '+url)
+                    print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Cannot Able To Fetch : '+url)
                     return False
-        print('[  INFO  ] Webpage Loaded Successfully')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Webpage Loaded Successfully')
         ## DETECTING THE PRESENCE OF RECAPTCHA
         if detect_reCaptcha() :
-            print('[  INFO  ] Captcha Found, Rotating IP Address ')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Captcha Found, Rotating IP Address ')
             try:
                 DRIVER.delete_all_cookies() 
                 DRIVER.quit()           ## CLOSING OLD INSTANCE OF BROWSER
-                print('[  INFO  ] Deleting Browser Cookies And Re-Initialising Browser')
+                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Deleting Browser Cookies And Re-Initialising Browser')
                 DRIVER = initialising_browser()
             except:
-                print('[  INFO  ] Unable To Delete Browser Cookies And Re-Initialise Browser')
+                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Unable To Delete Browser Cookies And Re-Initialise Browser')
             url_reload_status = True
         else:
             loading_status = False
     ## INSERTING DELAY TIME SO THAT SERVER DOESN'T GETS OVERLOADED
     if DELAY > 0:
-        print(f'[  INFO  ] Sleeping For {DELAY} Seconds')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Sleeping For {DELAY} Seconds')
         time.sleep(DELAY)
     return True
 
 def true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit):
     global TARGET_URLS
     global DRIVER
-    print(f'\n[  INFO  ] Starting Query on Name : {f_name} {l_name}, Address : {address}, Age Group : {lower_age_limit}-{upper_age_limit}')
+    print(f'\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Starting Query on Name : {f_name} {l_name}, Address : {address}, Age Group : {lower_age_limit}-{upper_age_limit}')
     query_url = f'https://www.truepeoplesearch.com/results?name={f_name} {l_name}&citystatezip={address}&agerange={lower_age_limit}-{upper_age_limit}&page=TEMP_NUM'
     search_url = query_url.replace('TEMP_NUM','1')
     res_status = get_request(search_url)	
@@ -228,15 +292,15 @@ def true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit):
             number_of_results = int(DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[3]/div[1]').text.split(' ')[0])
         except:
             number_of_results = 0            
-        print('[  INFO  ] Number Of Search Results : ' + str(number_of_results))
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Number Of Search Results : ' + str(number_of_results))
         number_of_pages = 1 if (number_of_results < 10) else number_of_results // 10
-        print('[  INFO  ] Number Of Pages To Query : ' + str(number_of_pages))
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Number Of Pages To Query : ' + str(number_of_pages))
         ## QUERYING ON EACH PAGE
-        print('[  INFO  ] Starting Querying On Each Page')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Starting Querying On Each Page')
         for num in range(1,number_of_pages+1):
             search_url = query_url.replace('TEMP_NUM',str(num))
             get_request(search_url)	
-            print('[  INFO  ] Bundling List Of Users Found\n')
+            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Bundling List Of Users Found\n')
             bundled_list = DRIVER.find_elements_by_tag_name('a')
             users_list = []
             for i in range(len(bundled_list)):
@@ -247,7 +311,7 @@ def true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit):
             TARGET_URLS.extend(users_list)
             if len(TARGET_URLS) >= COUNT:
                 break
-        print(f'[  INFO  ] Finishing Query On Name : {f_name} {l_name}, Address : {address}, Age Group : {lower_age_limit}-{upper_age_limit}')
+        print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Finishing Query On Name : {f_name} {l_name}, Address : {address}, Age Group : {lower_age_limit}-{upper_age_limit}')
 
 
 def generate_list_of_urls():
@@ -265,19 +329,54 @@ def generate_list_of_urls():
                     true_people_search(f_name,l_name,address,lower_age_limit,upper_age_limit)
                     if len(TARGET_URLS) >= COUNT:
                         return
-    print('[  INFO  ] All The Possible Combinations Of Names And CityStateZip Created')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} All The Possible Combinations Of Names And CityStateZip Created')
 
+
+def check_connectivity():
+    global DRIVER
+    url_reload_status = True
+    reload_count = 0
+    while url_reload_status:		
+        try:
+            DRIVER.set_page_load_timeout(TIMEOUT)
+            DRIVER.get("https://ident.me/")
+            ## IF PAGE LOADED SUCEESSFULLY BUT UNABLE TO DETECT IP ADDRESS
+            try:
+                public_ip = DRIVER.find_element_by_xpath("/html/body/pre").text
+                url_reload_status = False
+            except:
+                reload_count += 1
+                if reload_count >= 5 :
+                    print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connection Lost with Proxy Server')
+                    return False
+        ## IF CONNECTION IS SLOW THEN IT RETRY FOR 5 TIMES
+        except Exception as e:
+            reload_count += 1
+            if reload_count >= 5 :
+                print(f'{Fore.RED}[  ERROR ]{Style.RESET_ALL} Connection Lost with Proxy Server')
+                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+                input()
+                return False
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Current Public IP : {public_ip}')
+    return True
 
 if __name__ == "__main__":
     print_banner()
     initialisation()
     DRIVER = initialising_browser()
+    # ## CHECKING INTERNET CONNECTIVITY
+    # if check_connectivity() == False:
+    #     print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
+    #     input()
+    #     DRIVER.close()
+    #     sys.exit(0)
+    ## GENERATING LIST OF ALL THE LINKS REQUIRED TO HIT
     generate_list_of_urls()
-    print(f'\n[  INFO  ] Total Users Found : {len(TARGET_URLS)}')
+    print(f'\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Total Users Found : {len(TARGET_URLS)}')
     ## QUERY ABOUT THE EACH USER IN TARGET_URLS
     ## CREATING FILE FOR STORING HARVESTED DATA, HERE I AM GOING TO ADD HEADERS IN FILE
     USER_DETAILS = f'./HarvestedOutput/ScrappedDetails_{datetime.now().strftime("(%d-%m-%Y)_(%H-%M-%S)")}.csv'
-    print(f'[  INFO  ] Storing Harvested Data in {USER_DETAILS}')
+    print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Storing Harvested Data in {USER_DETAILS}')
     with open(USER_DETAILS,'w') as fd:
         fd.write(f'Name,Age,Address,Wireless-1,Wireless-2,Wireless-3,Wireless-4,Wireless-5,Wireless-6,Landline-1,Landline-2,Landline-3,Landline-4,Landline-5,Landline-6\n')
         fd.flush()
@@ -286,7 +385,7 @@ if __name__ == "__main__":
         user_age = 'NaN'
         user_contact = ""
         user_address = ""
-        print(f'\n[  INFO  ] Serial : {i+1}')
+        print(f'\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Serial : {i+1}')
         get_request(TARGET_URLS[i])
         ## NAME
         try:
@@ -346,4 +445,4 @@ if __name__ == "__main__":
             for i in range(blank_space):
                 fd.write(',')
             fd.write('\n')
-    print('\n\n[  INFO  ] Extraction Completed')
+    print(f'\n\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Extraction Completed')
