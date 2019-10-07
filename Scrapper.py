@@ -258,7 +258,7 @@ def get_request(url):
         print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Webpage Loaded Successfully')
         ## DETECTING THE PRESENCE OF RECAPTCHA
         if detect_reCaptcha() :
-            print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Captcha Found, Rotating IP Address ')
+            print(f'{Fore.YELLOW}\n[  INFO  ]{Style.RESET_ALL} Captcha Found, Rotating IP Address ')
             try:
                 DRIVER.delete_all_cookies() 
                 DRIVER.quit()           ## CLOSING OLD INSTANCE OF BROWSER
@@ -402,6 +402,7 @@ if __name__ == "__main__":
             user_address = DRIVER.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[4]/div[2]/div[2]/div[1]/div/a').text.replace('\n',',').replace('\t',' ').replace(',',' ')
         except:
             pass
+        ## CHECKING FOR THAT QUERY WHICH DOESN'T HAVE AGE
         if user_age == 'NaN':
             continue
         ## SPLITING INTO DIFFERENT CATEGORIES LIKE LANDLINE AND WIRELESS
@@ -441,3 +442,4 @@ if __name__ == "__main__":
                 fd.write(',')
             fd.write('\n')
     print(f'\n\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Extraction Completed')
+    DRIVER.close()
