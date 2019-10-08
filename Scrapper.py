@@ -349,8 +349,6 @@ def check_connectivity():
         except Exception as e:
             reload_count += 1
             if reload_count >= 5 :
-                print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
-                input()
                 return False
     print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Current Public IP : {public_ip}')
     return True
@@ -359,13 +357,6 @@ if __name__ == "__main__":
     print_banner()
     initialisation()
     DRIVER = initialising_browser()
-    # ## CHECKING INTERNET CONNECTIVITY
-    # if check_connectivity() == False:
-    #     print(f'{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Exiting...')
-    #     input()
-    #     DRIVER.close()
-    #     sys.exit(0)
-    ## GENERATING LIST OF ALL THE LINKS REQUIRED TO HIT
     generate_list_of_urls()
     print(f'\n{Fore.YELLOW}[  INFO  ]{Style.RESET_ALL} Total Users Found : {len(TARGET_URLS)}')
     ## QUERY ABOUT THE EACH USER IN TARGET_URLS
