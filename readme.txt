@@ -1,1 +1,1 @@
-# This tool is built for chrome version 77
+(True People Search is US based people search, reverse phone lookup and address lookup service) This bot is a freelance project given by a Delhi based Service Providing firm. It bypasses various ReCaptcha services which tries to block the requests of this bot and scrapes the details of a particular person by respecting the robots.txt of website.
